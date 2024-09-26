@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatApp Created for practice</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    #chat {
+      max-width: 600px;
+      margin: 50px auto;
+    }
+    #messages {
+      border: 1px solid #ccc;
+      padding: 10px;
+      height: 300px;
+      overflow-y: scroll;
+      margin-bottom: 10px;
+    }
+    #messageForm {
+      display: flex;
+      justify-content: space-between;
+    }
+    #messageForm input {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+    }
+    #messageForm button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat">
+    <h1>Real-Time Chat for practice</h1>
+    <div id="messages"></div>
+    <form id="messageForm">
+      <input id="username" type="text" placeholder="Enter your name" required>
+      <input id="message" type="text" placeholder="Enter your message" required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const messageForm = document.getElementById('messageForm');
+    const messageInput = document.getElementById('message');
+    const messages = document.getElementById('messages');
+    const usernameInput = document.getElementById('username');
+
+    messageForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const message = {
+        username: usernameInput.value,
+        text: messageInput.value
+      };
+
+     
+      socket.emit('chatMessage', message);
+
+     
+      messageInput.value = '';
+    });
+
+  
+    socket.on('chatMessage', (msg) => {
+      const messageElement = document.createElement('div');
+      messageElement.textContent = `${msg.username}: ${msg.text}`;
+      messages.appendChild(messageElement);
+
+      
+      messages.scrollTop = messages.scrollHeight;
+    });
+  </script>
+</body>
+</html>
